@@ -1,4 +1,24 @@
 # depslib dependency file v1.0
-1385316878 source:c:\users\morti\documents\github\patscan_project\patscan_start\patscan\main.cpp
+1426871265 source:c:\users\mort\desktop\patscan\patscan\main.cpp
 	<iostream>
+	<string>
+	<ctype.h>
+	<fstream>
+	<rule.h>
+	<pattern.h>
+
+1426683314 source:c:\users\mort\desktop\patscan\patscan\src\rule.cpp
+	"Rule.h"
+
+1426683340 c:\users\mort\desktop\patscan\patscan\include\rule.h
+	<string>
+
+1426810860 source:c:\users\mort\desktop\patscan\patscan\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1426810863 c:\users\mort\desktop\patscan\patscan\include\pattern.h
+	<iostream>
+	<Rule.h>
+	<string>
 
