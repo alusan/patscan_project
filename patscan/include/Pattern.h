@@ -1,7 +1,7 @@
 #ifndef PATTERN_H
 #define PATTERN_H
 #include <iostream>
-#include <Rule.h>
+#include "rule.h"
 #include <string>
 
 class Pattern : public Rule

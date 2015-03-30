@@ -2,8 +2,9 @@
 #include <string>
 #include <ctype.h>
 #include <fstream>
-#include <rule.h>
-#include <pattern.h>
+#include "include\rule.h"
+#include "include\pattern.h"
+#include <vector>
 
 using namespace std;
 
@@ -166,38 +167,51 @@ rules parsePatString(string s) { // Parse string pattern. Return match struct/cl
     }
 }
 
-
 int main(int argc, char** argv) {
 
-	/*
+
 	string patFileName = "";
 	string genomFileName = "";
+	vector<string> genome;
+	string pattern;
+	string line;
+	int g;
 
-
-	if ( argc = 3 ){
-		patFileName = argv[1]
-		genomFileName = argv[2]
+	if ( argc == 3 ){
+		patFileName = argv[1];
+		genomFileName = argv[2];
 	} else {
-		cout << "Usage: ./scan_for_matches file1 file2\n";
+		cerr << "Usage: ./scan_for_matches file1 file2\n";
 	}
+	ifstream patFile;
+	patFile.open(patFileName);
 
-	ifstream myfile1 (patFileName);
-	if (myfile1.is_open()){
-		// 1. Do awesome stuff.
-		// 2. ???
-		// 3. Profit
+	if (patFile.is_open()){
+		getline(patFile, line);
+		pattern = line;
 	}
-	myfile1.close();
-
-	ifstream myfile2 (genomFileName);
-	if (myfile2.is_open()){
-		// 1. Do awesome stuff.
-		// 2. ???
-		// 3. Profit
+	else {
+		cerr << "Error; pattern file not open\n";
 	}
-	myfile2.close();
+	patFile.close();
+	ifstream genomFile;
+	genomFile.open(genomFileName);
+	if (genomFile.is_open()){
+        g = 0;
+        while (getline(genomFile, line)){
+			genome.push_back(line);
+			cout << genome[g] << endl;
+			g++;
+		}
 
-	*/
+	}
+	else {
+        cerr << "Error; genome file not open\n";
+	}
+	genomFile.close();
+	cout << pattern << endl;
+
+
     string s1 = "p1=4...8";
     string s2 = "~p1";
     string s3 = "245";

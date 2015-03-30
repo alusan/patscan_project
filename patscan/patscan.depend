@@ -22,3 +22,27 @@
 	<Rule.h>
 	<string>
 
+1427110971 source:c:\users\cordes\documents\github\patscan_project\patscan\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1427114196 c:\users\cordes\documents\github\patscan_project\patscan\include\pattern.h
+	<iostream>
+	"rule.h"
+	<string>
+
+1427110971 c:\users\cordes\documents\github\patscan_project\patscan\include\rule.h
+	<string>
+
+1427110971 source:c:\users\cordes\documents\github\patscan_project\patscan\src\rule.cpp
+	"Rule.h"
+
+1427642023 source:c:\users\cordes\documents\github\patscan_project\patscan\main.cpp
+	<iostream>
+	<string>
+	<ctype.h>
+	<fstream>
+	"include\rule.h"
+	"include\pattern.h"
+	<vector>
+
