@@ -175,7 +175,6 @@ int main(int argc, char** argv) {
 	vector<string> genome;
 	string pattern;
 	string line;
-	int g;
 
 	if ( argc == 3 ){
 		patFileName = argv[1];
@@ -200,8 +199,6 @@ int main(int argc, char** argv) {
         g = 0;
         while (getline(genomFile, line)){
 			genome.push_back(line);
-			cout << genome[g] << endl;
-			g++;
 		}
 
 	}
