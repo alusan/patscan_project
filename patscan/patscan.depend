@@ -22,27 +22,119 @@
 	<Rule.h>
 	<string>
 
-1427110971 source:c:\users\cordes\documents\github\patscan_project\patscan\src\pattern.cpp
+1426810860 source:c:\users\morti\dropbox\patscan\patscan\src\pattern.cpp
 	"Pattern.h"
 	"Rule.h"
 
-1427114196 c:\users\cordes\documents\github\patscan_project\patscan\include\pattern.h
+1426810863 c:\users\morti\dropbox\patscan\patscan\include\pattern.h
 	<iostream>
-	"rule.h"
+	<Rule.h>
 	<string>
 
-1427110971 c:\users\cordes\documents\github\patscan_project\patscan\include\rule.h
+1426683340 c:\users\morti\dropbox\patscan\patscan\include\rule.h
 	<string>
 
-1427110971 source:c:\users\cordes\documents\github\patscan_project\patscan\src\rule.cpp
+1426683314 source:c:\users\morti\dropbox\patscan\patscan\src\rule.cpp
 	"Rule.h"
 
-1427642023 source:c:\users\cordes\documents\github\patscan_project\patscan\main.cpp
+1427209987 source:c:\users\morti\dropbox\patscan\patscan\main.cpp
 	<iostream>
 	<string>
 	<ctype.h>
 	<fstream>
-	"include\rule.h"
-	"include\pattern.h"
+	<rule.h>
+	<pattern.h>
+
+1426814460 source:c:\users\mort\desktop\patscan\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1426814463 c:\users\mort\desktop\patscan\include\pattern.h
+	<iostream>
+	<Rule.h>
+	<string>
+
+1426686940 c:\users\mort\desktop\patscan\include\rule.h
+	<string>
+
+1426686914 source:c:\users\mort\desktop\patscan\src\rule.cpp
+	"Rule.h"
+
+1428676193 source:c:\users\mort\desktop\patscan\main.cpp
+	<iostream>
+	<string>
+	<ctype.h>
+	<fstream>
+	<rule.h>
+	<pattern.h>
+
+1426814460 source:c:\users\morti\desktop\patscan\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1426814463 c:\users\morti\desktop\patscan\include\pattern.h
+	<iostream>
+	<Rule.h>
+	<string>
+
+1426686940 c:\users\morti\desktop\patscan\include\rule.h
+	<string>
+
+1426686914 source:c:\users\morti\desktop\patscan\src\rule.cpp
+	"Rule.h"
+
+1428926261 source:c:\users\morti\desktop\patscan\main.cpp
+	<iostream>
+	<string>
+	<ctype.h>
+	<fstream>
+	<rule.h>
+	<pattern.h>
+
+1428928031 source:c:\users\morti\dropbox\pscan v2\patscan\main.cpp
+	<iostream>
+	<string>
+	<ctype.h>
+	<fstream>
+	<rule.h>
+	<pattern.h>
+
+1426686940 c:\users\morti\dropbox\pscan v2\patscan\include\rule.h
+	<string>
+
+1426814463 c:\users\morti\dropbox\pscan v2\patscan\include\pattern.h
+	<iostream>
+	<Rule.h>
+	<string>
+
+1426814460 source:c:\users\morti\dropbox\pscan v2\patscan\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1426686914 source:c:\users\morti\dropbox\pscan v2\patscan\src\rule.cpp
+	"Rule.h"
+
+1426814460 source:c:\users\morti\dropbox\pscan v2\patscan - github\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1426814463 c:\users\morti\dropbox\pscan v2\patscan - github\include\pattern.h
+	<iostream>
+	<Rule.h>
+	<string>
+
+1426686940 c:\users\morti\dropbox\pscan v2\patscan - github\include\rule.h
+	<string>
+
+1426686914 source:c:\users\morti\dropbox\pscan v2\patscan - github\src\rule.cpp
+	"Rule.h"
+
+1429090639 source:c:\users\morti\dropbox\pscan v2\patscan - github\main.cpp
+	<iostream>
+	<string>
+	<ctype.h>
+	<fstream>
+	<rule.h>
+	<pattern.h>
 	<vector>
 

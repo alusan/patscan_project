@@ -1,1 +1,0 @@
-p1=0..5 AAGTTCCCAG ~p1

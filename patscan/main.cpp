@@ -2,11 +2,13 @@
 #include <string>
 #include <ctype.h>
 #include <fstream>
-#include "include\rule.h"
-#include "include\pattern.h"
+#include <rule.h>
+#include <pattern.h>
 #include <vector>
 
 using namespace std;
+
+#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 
 struct rules{
     int start;
@@ -18,9 +20,19 @@ struct rules{
     int deletions;
 };
 
+struct amb {
+    int mis;
+    int ins;
+    int del;
+};
+
 rules ids[20]; // Conaint a copy of a saved pattern. p1 becomes ids[1].
 
 rules match1, match2, match3; // global match rules. Will later become an array of rule classes
+
+int getSum(amb s) {
+    return s.mis + s.ins + s.del;
+}
 
 
 bool ReverseComplement(char c) { // Unusable code for later use. Alphabet: atcgtuamkrywsbvdhn
@@ -167,8 +179,82 @@ rules parsePatString(string s) { // Parse string pattern. Return match struct/cl
     }
 }
 
-int main(int argc, char** argv) {
+amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_len) {
+    amb final_result;
 
+    unsigned int x, y, s1len, s2len;
+    s1len = s1.length();
+    s2len = s2.length();
+    amb matrix[s2len+1][s1len+1];
+    matrix[0][0].mis = 0;
+    matrix[0][0].ins = 0;
+    matrix[0][0].del = 0;
+    for (x = 1; x <= s2len; x++) {
+        matrix[x][0].mis = matrix[x-1][0].mis + 1;
+        matrix[x][0].ins = 0;
+        matrix[x][0].del = 0;
+        //cout << matrix[x][0].mis << endl;
+        //cout << matrix[x][0].del << endl;
+        //cout << matrix[x][0].ins << endl;
+    }
+
+
+    for (y = 1; y <= s1len; y++) {
+        matrix[0][y].mis = matrix[0][y-1].mis + 1;
+        matrix[0][y].ins = 0;
+        matrix[0][y].del = 0;
+        //cout << matrix[0][y].mis << endl;
+        //cout << matrix[0][y].del << endl;
+        //cout << matrix[0][y].ins << endl;
+    }
+
+    //cout << "Test: " << matrix[0][1].mis << " " << matrix[0][1].del << " " << matrix[0][1].ins << endl;
+
+    for (x = 1; x <= s2len; x++)
+        for (y = 1; y <= s1len; y++) {
+            int a = getSum(matrix[x-1][y]) + 1;
+            int b = getSum(matrix[x][y-1]) + 1;
+            int edit = (s1[y-1] == s2[x-1] ? 0 : 1);
+            int c = getSum(matrix[x-1][y-1]) + edit;
+            //cout << a << " ";
+            //cout << b << " ";
+            //cout << c << endl;
+            if (a < b) {
+                if (a < c) {
+                    matrix[x][y].del = matrix[x-1][y].del;
+                    matrix[x][y].ins = matrix[x-1][y].ins + 1;
+                    matrix[x][y].mis = matrix[x-1][y].mis;
+                } else {
+                    matrix[x][y].mis = matrix[x-1][y-1].mis + edit;
+                    matrix[x][y].del = matrix[x-1][y-1].del;
+                    matrix[x][y].ins = matrix[x-1][y-1].ins;
+                }
+            } else {
+                if (b < c) {
+                    matrix[x][y].del = matrix[x][y-1].del + 1;
+                    matrix[x][y].ins = matrix[x][y-1].ins;
+                    matrix[x][y].mis = matrix[x][y-1].mis;
+                } else {
+                    matrix[x][y].mis = matrix[x-1][y-1].mis + edit;
+                    matrix[x][y].del = matrix[x-1][y-1].del;
+                    matrix[x][y].ins = matrix[x-1][y-1].ins;
+                }
+            }
+            // check matches between (len - del) and (ins + len). Return correct one
+            if ((x == (s2len - ins)) ||
+                ((x > (s2len - ins)) && (matrix[x][y].mis < final_result.mis) && (matrix[x][y].del < final_result.del) && (matrix[x][y].ins < final_result.ins)) ) {
+                final_result.del = matrix[x][y].del;
+                final_result.ins = matrix[x][y].ins;
+                final_result.mis = matrix[x][y].mis;
+                *result_len = x;
+            }
+
+        }
+
+    return final_result;
+}
+
+int main(int argc, char** argv) {
 
 	string patFileName = "";
 	string genomFileName = "";
@@ -196,7 +282,6 @@ int main(int argc, char** argv) {
 	ifstream genomFile;
 	genomFile.open(genomFileName);
 	if (genomFile.is_open()){
-        g = 0;
         while (getline(genomFile, line)){
 			genome.push_back(line);
 		}
@@ -207,6 +292,7 @@ int main(int argc, char** argv) {
 	}
 	genomFile.close();
 	cout << pattern << endl;
+
 
 
     string s1 = "p1=4...8";
@@ -226,61 +312,47 @@ int main(int argc, char** argv) {
 	cout << match.getMismatch() << endl;
 	cout << (match.getPattern()).length() << " - " << match.getMismatch() << " " << match.getInsert() << " " << match.getDelet() << endl;
 
-    string t = "ATCGCACATTATACATTATTATACAT";
+    string t = "ATCGCACBTTATACATTATTATACAT";
     int len_t = t.length();
     string p = (match.getPattern());
     int len_p = p.length();
 
-    int overlap[len_p];
-    match.getOverlap(overlap, len_p);
+    string t1 = "TGTA";
+    string t2 = "TGCA";
 
-    for (int j = 0; j < len_p; j++) {
-        cout << overlap[j] << endl;
-    }
+    //amb result = modLevenshtein(t1, t2);
+    //cout << "Mis: " << result.mis << endl << "Ins: " << result.ins << endl << "Del: " << result.del << endl;
 
 
     int mis = match.getMismatch();
     int ins = match.getInsert();
     int del = match.getDelet();
+    int lookAhead = mis + del;
 
-
+    amb amb_results;
 
     int i = 0;
-    int j = 0;
-    int k = 0;
-    while ((len_t-k) > len_p) {
-        //cout << "step 1: " << i << " " << j << " " << k << endl;
-        //cout << "test 1" << endl;
-        while ((j<len_p) && (t[i] == p[j])) {
-            i++;
+    while (i < (len_t - len_p)) { // traverse the text as far as possible
+        cout << i << endl;
+        int j = 0;
+        while ((j < lookAhead) && (t[i] != p[j])) { // is there a match
             j++;
-            cout << "test 2" << endl;
         }
-        cout << "step 2: " << i << " " << j << " " << k << endl;
-        if (j >= len_p) {
-            cout << "Match found at: " << k << endl;
-        }
-        //cout << "step 3: " << i << " " << j << " " << k << endl;
-        if ((j>0) && (overlap[j-1] > (-1))) {
-            //cout << "overlap k1: " << k << " " << overlap[j-1] << endl;
-            k = i - overlap[j-1] - 1;
-            //cout << "overlap k2: " << k << endl;
-        } else {
-            if (i == k) {
-                i++;
-            }
-            k = i;
-            //cout << "increment: " << k << endl;
-        }
-        //cout << "step 4: " << i << " " << j << " " << k << endl;
-        if (j > 0) {
-            //cout << "j > 0" << endl;
-            j = overlap[j-1] + 1;
-            //cout << "j: " << j << endl;
-        }
-        //cout << "overlap k: " << k << endl;
-        //cout << "step 5: " << i << " " << j << " " << k << endl;
+        if (j < lookAhead) { // Did we find a match?
+            if ((t[i+1] == p[j+1]) || (t[i+2] == p[j+2]) || (t[i+3] == p[j+3])) {
+                int result_len = len_p + ins;
+                amb_results = modLevenshtein(p, (t.substr(i-j, result_len)), ins, del, mis, &result_len);
 
+                if ((amb_results.del <= del) && (amb_results.ins <= ins) && (amb_results.mis <= mis)) {
+                    cout << "Found result at index " << i << " of " << t.substr(i-j, result_len) << endl << "Mis: " << amb_results.mis << endl << "Ins: " << amb_results.ins << endl << "Del: " << amb_results.del << endl;
+                    i += result_len - 1;
+                }
+            }
+        } else {
+
+        }
+    i++;
+    //cout << i << endl;
     }
 
 
