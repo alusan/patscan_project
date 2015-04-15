@@ -2,8 +2,8 @@
 #include <string>
 #include <ctype.h>
 #include <fstream>
-#include <rule.h>
-#include <pattern.h>
+#include "include/rule.h"
+#include "include/pattern.h"
 #include <vector>
 #include <time.h>
 
