@@ -5,6 +5,7 @@
 #include <rule.h>
 #include <pattern.h>
 #include <vector>
+#include <time.h>
 
 using namespace std;
 
@@ -254,6 +255,43 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
     return final_result;
 }
 
+void runTextline(Pattern match, string t) {
+    int len_t = t.length();
+    string p = (match.getPattern());
+    int len_p = p.length();
+
+    int mis = match.getMismatch();
+    int ins = match.getInsert();
+    int del = match.getDelet();
+    int lookAhead = mis + del;
+
+    amb amb_results;
+
+    int i = 0;
+    while (i < (len_t - len_p + lookAhead)) { // traverse the text as far as possible
+        cout << i << endl;
+        int j = 0;
+        while ((j < lookAhead) && (t[i] != p[j])) { // is there a match
+            j++;
+        }
+        if (j < lookAhead) { // Did we find a match?
+            if ((t[i+1] == p[j+1]) || (t[i+2] == p[j+2]) || (t[i+3] == p[j+3])) {
+                int result_len = len_p + ins;
+                amb_results = modLevenshtein(p, (t.substr(i-j, result_len)), ins, del, mis, &result_len);
+
+                if ((amb_results.del <= del) && (amb_results.ins <= ins) && (amb_results.mis <= mis)) {
+                    cout << "Found result at index " << i << " of " << t.substr(i-j, result_len) << " - " << "Mis: " << amb_results.mis << " - " << "Ins: " << amb_results.ins << " - " << "Del: " << amb_results.del << endl;
+                    i += result_len - 1;
+                }
+            }
+        } else {
+
+        }
+    i++;
+    }
+}
+
+
 int main(int argc, char** argv) {
 
 	string patFileName = "";
@@ -294,13 +332,14 @@ int main(int argc, char** argv) {
 	cout << pattern << endl;
 
 
-
+    /*
     string s1 = "p1=4...8";
     string s2 = "~p1";
     string s3 = "245";
-    string s4 = "AAANNBNAA[2,1,0]";
-    string s5 = "ATTATACA[2,1,0]";
-    match1 = parsePatString(s1);
+    string s4 = "AAANNBNAA[2,1,0]"; */
+    string s5 = "ATTATACA[2,1,1]";
+    Pattern match(s5);
+    /* match1 = parsePatString(s1);
     match2 = parsePatString(s2);
     match3 = parsePatString(s4);
     cout << "Hejsa derrrrrr" << endl;
@@ -308,53 +347,24 @@ int main(int argc, char** argv) {
     cout << match2.start << " : " << match2.finish << " Reverse Complement: " << match2.revers << endl;
     cout << match3.pattern << " - " << match3.mismatches << " " << match3.insertions << " " << match3.deletions << endl;
 
-    Pattern match(s5);
 	cout << match.getMismatch() << endl;
 	cout << (match.getPattern()).length() << " - " << match.getMismatch() << " " << match.getInsert() << " " << match.getDelet() << endl;
 
-    string t = "ATCGCACBTTATACATTATTATACAT";
-    int len_t = t.length();
-    string p = (match.getPattern());
-    int len_p = p.length();
-
-    string t1 = "TGTA";
-    string t2 = "TGCA";
-
-    //amb result = modLevenshtein(t1, t2);
-    //cout << "Mis: " << result.mis << endl << "Ins: " << result.ins << endl << "Del: " << result.del << endl;
 
 
-    int mis = match.getMismatch();
-    int ins = match.getInsert();
-    int del = match.getDelet();
-    int lookAhead = mis + del;
+    amb result = modLevenshtein(t1, t2);
+    cout << "Mis: " << result.mis << endl << "Ins: " << result.ins << endl << "Del: " << result.del << endl; */
 
-    amb amb_results;
+    clock_t ct;
+    ct = clock();
+    cout << "Clock start: " << ct << endl;
 
-    int i = 0;
-    while (i < (len_t - len_p)) { // traverse the text as far as possible
-        cout << i << endl;
-        int j = 0;
-        while ((j < lookAhead) && (t[i] != p[j])) { // is there a match
-            j++;
-        }
-        if (j < lookAhead) { // Did we find a match?
-            if ((t[i+1] == p[j+1]) || (t[i+2] == p[j+2]) || (t[i+3] == p[j+3])) {
-                int result_len = len_p + ins;
-                amb_results = modLevenshtein(p, (t.substr(i-j, result_len)), ins, del, mis, &result_len);
+    string t = "ATCGCACATTATACATTATTATACAT";
 
-                if ((amb_results.del <= del) && (amb_results.ins <= ins) && (amb_results.mis <= mis)) {
-                    cout << "Found result at index " << i << " of " << t.substr(i-j, result_len) << endl << "Mis: " << amb_results.mis << endl << "Ins: " << amb_results.ins << endl << "Del: " << amb_results.del << endl;
-                    i += result_len - 1;
-                }
-            }
-        } else {
+    runTextline(match, t);
 
-        }
-    i++;
-    //cout << i << endl;
-    }
-
+    ct = clock() - ct;
+    cout << "Clock end: " << ct << endl;
 
     return 0;
 }
