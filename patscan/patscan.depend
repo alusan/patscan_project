@@ -138,3 +138,18 @@
 	<pattern.h>
 	<vector>
 
+1426814460 source:c:\users\morti\documents\github\patscan_project\patscan\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1426814463 c:\users\morti\documents\github\patscan_project\patscan\include\pattern.h
+	<iostream>
+	<Rule.h>
+	<string>
+
+1426686940 c:\users\morti\documents\github\patscan_project\patscan\include\rule.h
+	<string>
+
+1426686914 source:c:\users\morti\documents\github\patscan_project\patscan\src\rule.cpp
+	"Rule.h"
+

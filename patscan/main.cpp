@@ -190,9 +190,9 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
     matrix[0][0].ins = 0;
     matrix[0][0].del = 0;
     for (x = 1; x <= s2len; x++) {
-        matrix[x][0].mis = matrix[x-1][0].mis + 1;
+        matrix[x][0].mis = 0;
         matrix[x][0].ins = 0;
-        matrix[x][0].del = 0;
+        matrix[x][0].del = matrix[x-1][0].del + 1;
         //cout << matrix[x][0].mis << endl;
         //cout << matrix[x][0].del << endl;
         //cout << matrix[x][0].ins << endl;
@@ -200,8 +200,8 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
 
 
     for (y = 1; y <= s1len; y++) {
-        matrix[0][y].mis = matrix[0][y-1].mis + 1;
-        matrix[0][y].ins = 0;
+        matrix[0][y].mis = 0;
+        matrix[0][y].ins = matrix[0][y-1].ins + 1;
         matrix[0][y].del = 0;
         //cout << matrix[0][y].mis << endl;
         //cout << matrix[0][y].del << endl;
