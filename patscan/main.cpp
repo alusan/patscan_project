@@ -6,7 +6,7 @@
 #include "include/pattern.h"
 #include <vector>
 #include <time.h>
-
+// Hej
 using namespace std;
 
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
