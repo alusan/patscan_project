@@ -337,7 +337,7 @@ int main(int argc, char** argv) {
     string s2 = "~p1";
     string s3 = "245";
     string s4 = "AAANNBNAA[2,1,0]"; */
-    string s5 = "ATTATACA[2,1,1]";
+    string s5 = "ATTATACA[2,1,0]";
     Pattern match(s5);
     /* match1 = parsePatString(s1);
     match2 = parsePatString(s2);
@@ -359,9 +359,11 @@ int main(int argc, char** argv) {
     ct = clock();
     cout << "Clock start: " << ct << endl;
 
-    string t = "ATCGCACATTATACATTATTATACAT";
+    string t = "ATCGCACBTTATACATTATTATACAT";
 
-    runTextline(match, t);
+    for (int i = 1; i < genome.size(); i++) {
+        runTextline(match, genome[i]);
+    }
 
     ct = clock() - ct;
     cout << "Clock end: " << ct << endl;
