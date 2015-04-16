@@ -9,8 +9,6 @@
 // Hej
 using namespace std;
 
-#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
-
 struct rules{
     int start;
     int finish;
@@ -135,8 +133,11 @@ rules parsePattern(string s) {
     return match;
 }
 
-
-rules parsePatString(string s) { // Parse string pattern. Return match struct/class
+/*
+Parse string pattern. Return match class. Can be modified to be be smaller by
+if statements for char numbers.
+*/
+rules parsePatString(string s) {
 
     switch(s[0]){
     case '0':
@@ -180,6 +181,10 @@ rules parsePatString(string s) { // Parse string pattern. Return match struct/cl
     }
 }
 
+/*
+finds the best levenshtein distance between min-max of 2nd string compared to the first.
+Has separate tracking of miamatches, insertions and deletions.
+*/
 amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_len) {
     amb final_result;
 
@@ -255,6 +260,13 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
     return final_result;
 }
 
+/*
+Fuzzy stringsearch. Takes a pattern and a textline to find matches in. Traverses the text and tries to predict a match to
+test with the modLevenshtein() algorithm. If correct match is found; index is jumped to the end of matched text.
+
+Later iterations will have these parts in their respective classes and modified for multiple patterns.
+The prediction algorithm is crude and gives errors with smaller patterns. This must be fixed.
+*/
 void runTextline(Pattern match, string t) {
     int len_t = t.length();
     string p = (match.getPattern());
@@ -362,7 +374,7 @@ int main(int argc, char** argv) {
     string t = "ATCGCACBTTATACATTATTATACAT";
 
     for (int i = 1; i < genome.size(); i++) {
-        runTextline(match, genome[i]);
+        runTextline(match, genome[i]); // runs each textline and searches for matches.
     }
 
     ct = clock() - ct;
