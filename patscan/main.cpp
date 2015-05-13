@@ -137,48 +137,23 @@ rules parsePattern(string s) {
 Parse string pattern. Return match class. Can be modified to be be smaller by
 if statements for char numbers.
 */
-rules parsePatString(string s) {
+Rule parsePatString(string s) {
 
-    switch(s[0]){
-    case '0':
-        return parseMatchingRule(s);
-        break;
-    case '1':
-        return parseMatchingRule(s);
-        break;
-    case '2':
-        return parseMatchingRule(s);
-        break;
-    case '3':
-        return parseMatchingRule(s);
-        break;
-    case '4':
-        return parseMatchingRule(s);
-        break;
-    case '5':
-        return parseMatchingRule(s);
-        break;
-    case '6':
-        return parseMatchingRule(s);
-        break;
-    case '7':
-        return parseMatchingRule(s);
-        break;
-    case '8':
-        return parseMatchingRule(s);
-        break;
-    case '9':
-        return parseMatchingRule(s);
-        break;
-    case '~':
-        return parseRevMatching(s);
-        break;
-    case 'p':
-        return parseRuleAndID(s);
-        break;
-    default : // expect pattern of alphabet: atcgumkrywsbdhnATCGUMKRYWSBDHN
-       return parsePattern(s);
+    if ((s[0] > 47) && (s[0] <= 57)) {
+        //return parseMatchingRule(s);
+    } else {
+        if (s[0] == '~') {
+            //return parseRevMatching(s);
+        } else {
+            if (s[0] == 'p') {
+                //return parseRuleAndID(s);
+            } else {
+                Pattern match(s);
+                return match;
+            }
+        }
     }
+    //Pattern match(s5);
 }
 
 /*
@@ -197,8 +172,8 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
     matrix[0][0].del = 0;
     for (x = 1; x <= s2len; x++) {
         matrix[x][0].mis = 0;
-        matrix[x][0].ins = 0;
-        matrix[x][0].del = matrix[x-1][0].del + 1;
+        matrix[x][0].ins = matrix[x-1][0].ins + 1;
+        matrix[x][0].del = 0;
         //cout << matrix[x][0].mis << endl;
         //cout << matrix[x][0].del << endl;
         //cout << matrix[x][0].ins << endl;
@@ -207,8 +182,8 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
 
     for (y = 1; y <= s1len; y++) {
         matrix[0][y].mis = 0;
-        matrix[0][y].ins = matrix[0][y-1].ins + 1;
-        matrix[0][y].del = 0;
+        matrix[0][y].ins = 0;
+        matrix[0][y].del = matrix[0][y-1].del + 1;
         //cout << matrix[0][y].mis << endl;
         //cout << matrix[0][y].del << endl;
         //cout << matrix[0][y].ins << endl;
