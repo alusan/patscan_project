@@ -138,28 +138,28 @@
 	<pattern.h>
 	<vector>
 
-1426814460 source:c:\users\morti\documents\github\patscan_project\patscan\src\pattern.cpp
+1431510964 source:c:\users\morti\documents\github\patscan_project\patscan\src\pattern.cpp
 	"Pattern.h"
 	"Rule.h"
 
-1426814463 c:\users\morti\documents\github\patscan_project\patscan\include\pattern.h
+1431510964 c:\users\morti\documents\github\patscan_project\patscan\include\pattern.h
 	<iostream>
-	<Rule.h>
+	"rule.h"
 	<string>
 
-1426686940 c:\users\morti\documents\github\patscan_project\patscan\include\rule.h
+1431510964 c:\users\morti\documents\github\patscan_project\patscan\include\rule.h
 	<string>
 
-1426686914 source:c:\users\morti\documents\github\patscan_project\patscan\src\rule.cpp
+1431510964 source:c:\users\morti\documents\github\patscan_project\patscan\src\rule.cpp
 	"Rule.h"
 
-1429098450 source:c:\users\morti\documents\github\patscan_project\patscan\main.cpp
+1431511153 source:c:\users\morti\documents\github\patscan_project\patscan\main.cpp
 	<iostream>
 	<string>
 	<ctype.h>
 	<fstream>
-	<rule.h>
-	<pattern.h>
+	"include/rule.h"
+	"include/pattern.h"
 	<vector>
 	<time.h>
 
