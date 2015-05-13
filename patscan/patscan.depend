@@ -203,3 +203,13 @@
 1429091456 source:c:\users\cordes\documents\github\patscan_project\patscan\src\rule.cpp
 	"Rule.h"
 
+1431519732 source:c:\users\cordes\documents\github\patscan_project\patscan\main.cpp
+	<iostream>
+	<string>
+	<ctype.h>
+	<fstream>
+	"include/rule.h"
+	"include/pattern.h"
+	<vector>
+	<time.h>
+
