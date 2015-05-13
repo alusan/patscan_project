@@ -256,7 +256,6 @@ void runTextline(Pattern match, string t) {
 
     int i = 0;
     while (i < (len_t - len_p + lookAhead)) { // traverse the text as far as possible
-        cout << i << endl;
         int j = 0;
         while ((j < lookAhead) && (t[i] != p[j])) { // is there a match
             j++;
@@ -325,7 +324,7 @@ int main(int argc, char** argv) {
     string s3 = "245";
     string s4 = "AAANNBNAA[2,1,0]"; */
     string s5 = "ATTATACA[2,1,0]";
-    Pattern match(s5);
+    Pattern match(pattern);
     /* match1 = parsePatString(s1);
     match2 = parsePatString(s2);
     match3 = parsePatString(s4);
