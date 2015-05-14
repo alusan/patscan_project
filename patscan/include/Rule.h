@@ -7,10 +7,10 @@ class Rule
 {
     public:
         Rule();
-        bool getRevers();
         int parseNum(int *index, std::string s);
+        int getID();
     protected:
-        bool revers;
+        int class_id; //ID of the class type
     private:
 };
 

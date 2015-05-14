@@ -4,30 +4,19 @@
 #include <fstream>
 #include "include/rule.h"
 #include "include/pattern.h"
+#include "include/pm_unit.h"
+#include "include/p_unit.h"
+#include "include/m_unit.h"
 #include <vector>
 #include <time.h>
 // Hej
 using namespace std;
-
-struct rules{
-    int start;
-    int finish;
-    int revers;
-    char* pattern = (char *)malloc(10 * sizeof(char));
-    int mismatches;
-    int insertions;
-    int deletions;
-};
 
 struct amb {
     int mis;
     int ins;
     int del;
 };
-
-rules ids[20]; // Conaint a copy of a saved pattern. p1 becomes ids[1].
-
-rules match1, match2, match3; // global match rules. Will later become an array of rule classes
 
 int getSum(amb s) {
     return s.mis + s.ins + s.del;
@@ -59,78 +48,33 @@ int parseNum(int *index, string s) { // Updates index and returns string number
     return stoi((s.substr(formerIndex, length)), nullptr, 10);
 }
 
-rules parseMatchingRule(string s) { //if this, then expect pattern of type: 4...8
-    rules match;
-    int i = 0;
-    match.start = parseNum(&i, s);
-    i = i + 3;
-    match.finish = parseNum(&i, s);
-    match.revers = 0;
-    return match;
-}
-
-rules parseRevMatching(string s) { //if this, then expect pattern of type: ~p1 or ~p2 etc.
-    rules match;
-    int i = 1;
-    if (s[i] == 'p') {
-        i++;
-        int id = parseNum(&i, s);
-        if ((ids[id].start != NULL) && (ids[id].finish != NULL)) {
-            match = ids[id];
-            match.revers = 1;
-        } else {
-            cerr << "Error; Couldn't find pat ID";
-            exit(1);
+bool patCheck(string s) {
+    if (s[0] == '~') {
+        return true;
+    }
+    int len = s.length();
+    if (s[0] == 'p') {
+        if (len > 1) {
+            int index = 1;
+            if ((index < len) && isdigit(s[index])) {
+                index++;
+            } else {
+                return false;
+            }
+            bool cont = true;
+            while (cont) {
+                if ((index < len)) {
+                    if (isdigit(s[0])) {
+                        index++;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }
         }
     }
-    return match;
-}
-
-rules parseRuleAndID(string s) { //if this, then expect pattern of type: p1=4...8
-    rules match;
-    int i = 1;
-    int id = parseNum(&i, s); // SAVE ID: p1, p2, p3 etc.
-    if(s[i] == '=') {
-        i++;
-        match.start = parseNum(&i, s);
-        i = i + 3;
-        match.finish = parseNum(&i, s);
-        match.revers = 0;
-        ids[id] = match;
-    } else {
-        cerr << "Error; Parsing failed";
-        exit(1);
-    }
-    return match;
-}
-
-rules parsePattern(string s) {
-    rules match;
-
-    int i = 0;
-    bool patternParsed = false;
-
-    while (!patternParsed) {
-        (match.pattern)[i] = s[i];
-        i++;
-        if ((s[i] == '[') || (s[i] == '\0')) {
-            patternParsed = true;
-        }
-    }
-    (match.pattern)[i] = '\0';
-    if ((s[i] == '[')) {
-        i++;
-        match.mismatches = parseNum(&i, s);
-        i++;
-        match.insertions = parseNum(&i, s);
-        i++;
-        match.deletions = parseNum(&i, s);
-    } else {
-        match.mismatches = 0;
-        match.insertions = 0;
-        match.deletions = 0;
-    }
-    return match;
 }
 
 /*
@@ -138,22 +82,23 @@ Parse string pattern. Return match class. Can be modified to be be smaller by
 if statements for char numbers.
 */
 Rule parsePatString(string s) {
-
     if ((s[0] > 47) && (s[0] <= 57)) {
-        //return parseMatchingRule(s);
+        m_unit pat(s);
+        return pat;
     } else {
-        if (s[0] == '~') {
-            //return parseRevMatching(s);
+        if (patCheck(s)) {
+            p_unit pat(s);
+            return pat;
         } else {
             if (s[0] == 'p') {
-                //return parseRuleAndID(s);
+                pm_unit pat(s);
+                return pat;
             } else {
-                Pattern match(s);
-                return match;
+                Pattern pat(s);
+                return pat;
             }
         }
     }
-    //Pattern match(s5);
 }
 
 /*
@@ -237,7 +182,7 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
 
 /*
 Fuzzy stringsearch. Takes a pattern and a textline to find matches in. Traverses the text and tries to predict a match to
-test with the modLevenshtein() algorithm. If correct match is found; index is jumped to the end of matched text.
+test with the modLevenshtein() algorithm. If correct match is found; ithis->ndex is jumped to the end of matched text.
 
 Later iterations will have these parts in their respective classes and modified for multiple patterns.
 The prediction algorithm is crude and gives errors with smaller patterns. This must be fixed.
@@ -294,7 +239,6 @@ int main(int argc, char** argv) {
 	}
 	ifstream patFile;
 	patFile.open(patFileName);
-
 	if (patFile.is_open()){
 		getline(patFile, line);
 		pattern = line;
@@ -336,10 +280,14 @@ int main(int argc, char** argv) {
 	cout << match.getMismatch() << endl;
 	cout << (match.getPattern()).length() << " - " << match.getMismatch() << " " << match.getInsert() << " " << match.getDelet() << endl;
 
-
-
     amb result = modLevenshtein(t1, t2);
     cout << "Mis: " << result.mis << endl << "Ins: " << result.ins << endl << "Del: " << result.del << endl; */
+
+    Rule unit = parsePatString(s5);
+    Rule *p_unit = &unit;
+
+    cout << p_unit << endl;
+    cout << p_unit->getID() << endl;
 
     clock_t ct;
     ct = clock();

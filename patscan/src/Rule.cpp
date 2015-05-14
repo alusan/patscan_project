@@ -2,11 +2,6 @@
 
 Rule::Rule()
 {
-    revers = false;
-}
-
-bool Rule::getRevers() {
-    return revers;
 }
 
 int Rule::parseNum(int *index, std::string s) { // Updates index and returns string number
@@ -22,5 +17,9 @@ int Rule::parseNum(int *index, std::string s) { // Updates index and returns str
         }
     }
     return stoi((s.substr(formerIndex, length)), nullptr, 10);
+}
+
+int Rule::getID() {
+    return this->class_id;
 }
 

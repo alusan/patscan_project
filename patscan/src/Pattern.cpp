@@ -2,6 +2,7 @@
 #include "Rule.h"
 
 Pattern::Pattern(std::string s) {
+    this->class_id = 1;
     int i = 0;
     bool patternParsed = false;
 

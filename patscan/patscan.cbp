@@ -36,9 +36,15 @@
 		</Compiler>
 		<Unit filename="include/Pattern.h" />
 		<Unit filename="include/Rule.h" />
+		<Unit filename="include/m_unit.h" />
+		<Unit filename="include/p_unit.h" />
+		<Unit filename="include/pm_unit.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Pattern.cpp" />
 		<Unit filename="src/Rule.cpp" />
+		<Unit filename="src/m_unit.cpp" />
+		<Unit filename="src/p_unit.cpp" />
+		<Unit filename="src/pm_unit.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
