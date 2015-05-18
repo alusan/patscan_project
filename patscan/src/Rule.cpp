@@ -23,3 +23,8 @@ int Rule::getID() {
     return this->class_id;
 }
 
+Rule::~Rule()
+{
+    //dtor
+}
+

@@ -163,10 +163,9 @@
 	<vector>
 	<time.h>
 
-1431611756 source:c:\users\mort\patscan_project\patscan\main.cpp
+1431960352 source:c:\users\mort\patscan_project\patscan\main.cpp
 	<iostream>
-	<string>
-	<ctype.h>
+	<cstring>
 	<fstream>
 	"include/rule.h"
 	"include/pattern.h"
@@ -176,19 +175,19 @@
 	<vector>
 	<time.h>
 
-1431607723 c:\users\mort\patscan_project\patscan\include\rule.h
+1431708349 c:\users\mort\patscan_project\patscan\include\rule.h
 	<string>
 
-1431601195 c:\users\mort\patscan_project\patscan\include\pattern.h
+1431953462 c:\users\mort\patscan_project\patscan\include\pattern.h
 	<iostream>
 	"rule.h"
 	<string>
 
-1431607640 source:c:\users\mort\patscan_project\patscan\src\pattern.cpp
+1431953554 source:c:\users\mort\patscan_project\patscan\src\pattern.cpp
 	"Pattern.h"
 	"Rule.h"
 
-1431607759 source:c:\users\mort\patscan_project\patscan\src\rule.cpp
+1431708368 source:c:\users\mort\patscan_project\patscan\src\rule.cpp
 	"Rule.h"
 
 1429091456 source:c:\users\cordes\documents\github\patscan_project\patscan\src\pattern.cpp
@@ -216,7 +215,7 @@
 	<vector>
 	<time.h>
 
-1431608605 c:\users\mort\patscan_project\patscan\include\pm_unit.h
+1431712699 c:\users\mort\patscan_project\patscan\include\pm_unit.h
 	<Rule.h>
 
 1431608639 source:c:\users\mort\patscan_project\patscan\src\p_unit.cpp
@@ -225,7 +224,7 @@
 1431608628 c:\users\mort\patscan_project\patscan\include\p_unit.h
 	<Rule.h>
 
-1431608609 source:c:\users\mort\patscan_project\patscan\src\pm_unit.cpp
+1431712695 source:c:\users\mort\patscan_project\patscan\src\pm_unit.cpp
 	"pm_unit.h"
 
 1431608659 source:c:\users\mort\patscan_project\patscan\src\m_unit.cpp

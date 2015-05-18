@@ -9,6 +9,7 @@ class Rule
         Rule();
         int parseNum(int *index, std::string s);
         int getID();
+        virtual ~Rule();
     protected:
         int class_id; //ID of the class type
     private:

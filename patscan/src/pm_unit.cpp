@@ -24,3 +24,8 @@ int pm_unit::getEnd() {
 int pm_unit::getMemp() {
     return this->mem_p;
 }
+
+pm_unit::~pm_unit()
+{
+    //dtor
+}

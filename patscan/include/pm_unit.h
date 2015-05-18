@@ -11,6 +11,7 @@ class pm_unit : public Rule //if this, then expect pattern of type: p1=4...8
         int getStart();
         int getEnd();
         int getMemp();
+        virtual ~pm_unit();
     protected:
         int mem_p; // pattern id used in memory
         int ind_s; // start of the matching range

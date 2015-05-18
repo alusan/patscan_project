@@ -1,6 +1,5 @@
 #include <iostream>
-#include <string>
-#include <ctype.h>
+#include <cstring>
 #include <fstream>
 #include "include/rule.h"
 #include "include/pattern.h"
@@ -9,7 +8,7 @@
 #include "include/m_unit.h"
 #include <vector>
 #include <time.h>
-// Hej
+
 using namespace std;
 
 struct amb {
@@ -18,18 +17,129 @@ struct amb {
     int del;
 };
 
+struct sav_pat {
+    int st;
+    int len;
+};
+
+struct result_box {
+    bool fullHit = false;
+    int* r;
+};
+
+
+int results[20];
+int max_units;
+
+void subChars(char* s, char* newString, int start, int length) {
+    for (int i = 0; i < length; i++) {
+        newString[i] = s[start];
+        start++;
+    }
+    newString[length] = '\0';
+}
+
 int getSum(amb s) {
     return s.mis + s.ins + s.del;
 }
 
 
-bool ReverseComplement(char c) { // Unusable code for later use. Alphabet: atcgtuamkrywsbvdhn
-    switch(c){
-    case 0:
-        return true;
-        break;
-    default :
-       return false;
+char comp(char c) { //complement function from scan_for_matches
+    switch (c)
+    {
+      case 'a':
+	return 't';
+      case 'A':
+	return 'T';
+
+      case 'c':
+	return 'g';
+      case 'C':
+	return 'G';
+
+      case 'g':
+	return 'c';
+      case 'G':
+	return 'C';
+
+      case 't':
+      case 'u':
+	return 'a';
+      case 'T':
+      case 'U':
+	return 'A';
+
+      case 'm':
+	return 'k';
+      case 'M':
+	return 'K';
+
+      case 'r':
+	return 'y';
+      case 'R':
+	return 'Y';
+
+      case 'w':
+	return 'w';
+      case 'W':
+	return 'W';
+
+      case 's':
+	return 'S';
+      case 'S':
+	return 'S';
+
+      case 'y':
+	return 'r';
+      case 'Y':
+	return 'R';
+
+      case 'k':
+	return 'm';
+      case 'K':
+	return 'M';
+
+      case 'b':
+	return 'v';
+      case 'B':
+	return 'V';
+
+      case 'd':
+	return 'h';
+      case 'D':
+	return 'H';
+
+      case 'h':
+	return 'd';
+      case 'H':
+	return 'D';
+
+      case 'v':
+	return 'b';
+      case 'V':
+	return 'B';
+
+      case 'n':
+	return 'n';
+      case 'N':
+	return 'N';
+
+      default:
+	return c;
+    }
+}
+
+void revChar(char* str) { //modified reverse function from stackoverflow.
+    const size_t len = strlen(str);
+    const size_t half = len / 2;
+
+    for(size_t i = 0; i < half; i++) {
+        char temp = comp(str[i]);
+        str[i] = comp(str[len-i-1]);
+        str[len-i-1] = temp;
+    }
+    if (len % 2) { // reverse complment the middle char if length is odd
+        str[half] = comp(str[half]);
     }
 }
 
@@ -75,26 +185,27 @@ bool patCheck(string s) {
             }
         }
     }
+    return false;
 }
 
 /*
 Parse string pattern. Return match class. Can be modified to be be smaller by
 if statements for char numbers.
 */
-Rule parsePatString(string s) {
+Rule* parsePatString(string s) {
     if ((s[0] > 47) && (s[0] <= 57)) {
-        m_unit pat(s);
+        m_unit* pat = new m_unit(s);
         return pat;
     } else {
         if (patCheck(s)) {
-            p_unit pat(s);
+            p_unit* pat = new p_unit(s);
             return pat;
         } else {
             if (s[0] == 'p') {
-                pm_unit pat(s);
+                pm_unit* pat = new pm_unit(s);
                 return pat;
             } else {
-                Pattern pat(s);
+                Pattern* pat = new Pattern(s);
                 return pat;
             }
         }
@@ -105,12 +216,12 @@ Rule parsePatString(string s) {
 finds the best levenshtein distance between min-max of 2nd string compared to the first.
 Has separate tracking of miamatches, insertions and deletions.
 */
-amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_len) {
+amb modLevenshtein(char* s1, char* s2, int i, int ins, int del, int mis, int *result_len) {
     amb final_result;
 
     unsigned int x, y, s1len, s2len;
-    s1len = s1.length();
-    s2len = s2.length();
+    s1len = strlen(s1);
+    s2len = *result_len;
     amb matrix[s2len+1][s1len+1];
     matrix[0][0].mis = 0;
     matrix[0][0].ins = 0;
@@ -140,7 +251,7 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
         for (y = 1; y <= s1len; y++) {
             int a = getSum(matrix[x-1][y]) + 1;
             int b = getSum(matrix[x][y-1]) + 1;
-            int edit = (s1[y-1] == s2[x-1] ? 0 : 1);
+            int edit = (s1[y-1] == s2[x+i-1] ? 0 : 1);
             int c = getSum(matrix[x-1][y-1]) + edit;
             //cout << a << " ";
             //cout << b << " ";
@@ -180,47 +291,182 @@ amb modLevenshtein(string s1, string s2, int ins, int del, int mis, int *result_
     return final_result;
 }
 
-/*
-Fuzzy stringsearch. Takes a pattern and a textline to find matches in. Traverses the text and tries to predict a match to
-test with the modLevenshtein() algorithm. If correct match is found; ithis->ndex is jumped to the end of matched text.
-
-Later iterations will have these parts in their respective classes and modified for multiple patterns.
-The prediction algorithm is crude and gives errors with smaller patterns. This must be fixed.
-*/
-void runTextline(Pattern match, string t) {
-    int len_t = t.length();
-    string p = (match.getPattern());
-    int len_p = p.length();
-
-    int mis = match.getMismatch();
-    int ins = match.getInsert();
-    int del = match.getDelet();
-    int lookAhead = mis + del;
-
-    amb amb_results;
-
-    int i = 0;
-    while (i < (len_t - len_p + lookAhead)) { // traverse the text as far as possible
-        int j = 0;
-        while ((j < lookAhead) && (t[i] != p[j])) { // is there a match
-            j++;
+bool runUnit(int unidex, int i, char* seq, Rule **units, sav_pat *memp, int *r) {
+    if(unidex >= max_units) {
+        //cout << "End: 1: " << unidex << endl;
+        //cout << "End: 2" << endl;
+        for (int j = 0; j < max_units; j++) {
+            results[j] = r[j];
         }
-        if (j < lookAhead) { // Did we find a match?
-            if ((t[i+1] == p[j+1]) || (t[i+2] == p[j+2]) || (t[i+3] == p[j+3])) {
-                int result_len = len_p + ins;
-                amb_results = modLevenshtein(p, (t.substr(i-j, result_len)), ins, del, mis, &result_len);
+        return true;
+    }
 
+    switch (units[unidex]->getID()) {
+        case 1: {
+            //cout << i << endl;
+            Pattern *cur_unit;
+            cur_unit = dynamic_cast<Pattern *> (units[unidex]);
+            char* pat = cur_unit->getPattern();
+            bool box = false;
+
+            int mis = cur_unit->getMismatch();
+            int ins = cur_unit->getInsert();
+            int del = cur_unit->getDelet();
+            if((mis+ins+del) == 0) {
+                int counter = 0;
+                int length = strlen(pat);
+                while (((seq[i+counter] == pat[counter]) || (seq[i+counter] == 'N'))
+                       && (counter < length)) {
+                counter++;
+                }
+                if (counter >= length) {
+                    r[unidex] = counter;
+                    box = runUnit(unidex+1, i+length, seq, units, memp, r);
+                }
+            } else {
+                int result_len = strlen(pat) + ins;
+                amb amb_results = modLevenshtein(pat, seq, i, ins, del, mis, &result_len);
                 if ((amb_results.del <= del) && (amb_results.ins <= ins) && (amb_results.mis <= mis)) {
-                    cout << "Found result at index " << i << " of " << t.substr(i-j, result_len) << " - " << "Mis: " << amb_results.mis << " - " << "Ins: " << amb_results.ins << " - " << "Del: " << amb_results.del << endl;
-                    i += result_len - 1;
+                    cout << "Amb: " << amb_results.mis << " " << amb_results.ins << " " << amb_results.del << " - ";
+                    r[unidex] = result_len;
+                    box = runUnit(unidex+1, i+result_len, seq, units, memp, r);
                 }
             }
-        } else {
 
+            return box;
+            break;
         }
-    i++;
+        case 2: {
+            //cout << "its a pm unit" << endl;
+            pm_unit *cur_unit;
+            cur_unit = dynamic_cast<pm_unit *> (units[unidex]);
+            int rs = cur_unit->getStart();
+            int re = cur_unit->getEnd();
+            int mid = cur_unit->getMemp();
+            //cout << "id: " << mid << endl;
+            memp[mid].st = i;
+            //cout << "Step: 1" << endl;
+            bool box;
+            //cout << "Step: 2" << endl;
+            while (rs <= re) {
+                //cout << "Step: 3" << endl;
+                sav_pat newp[5];
+                for(int i = 0; i <= 5; i++) {
+                    newp[mid].st = memp[mid].st;
+                    newp[mid].len = memp[mid].len;
+                }
+                //cout << "Step: 4" << endl;
+                int ren[max_units];
+                for(int i = 0; i < max_units; i++)
+                    ren[i] = r[i];
+
+                //cout << "Step: 5" << endl;
+                ren[unidex] = rs;
+                newp[mid].len = rs;
+                //cout << "id: " << mid << " length: " << newp[mid].len << endl;
+                //cout << "Step: 6" << endl;
+                //cout << unidex+1 << " " << i+rs  << " " <<  seq  << endl << newp[mid].st << " " << newp[mid].len << " " <<  re[unidex] << endl;
+                box = runUnit(unidex+1, i+rs, seq, units, newp, ren);
+                //cout << "bool is: " << box.fullHit << endl;
+                //cout << "PM: 1" << endl;
+                //cout << "Step: 7" << endl;
+                if (box == true) {
+                    //cout << "PM: Success" << endl;
+                    return box;
+                }
+                rs++;
+            }
+            return false;
+            break;
+        }
+        case 3: {
+            //cout << "its a m unit" << endl;
+            m_unit *cur_unit;
+            cur_unit = dynamic_cast<m_unit *> (units[unidex]);
+            int rs = cur_unit->getStart();
+            int re = cur_unit->getEnd();
+            bool box = false;
+
+            while (rs <= re) {
+                int re[max_units];
+                for(int i = 0; i < max_units; i++)
+                    re[i] = r[i];
+
+                re[unidex] = rs;
+                //cout << unidex+1 << " " << i+rs  << " " <<  seq  << endl << re[unidex] << endl;
+                box = runUnit(unidex+1, i+rs, seq, units, memp, re);
+                //cout << "M: 1" << endl;
+                if (box == true) {
+                    //cout << "M: Success" << endl;
+                    return box;
+                }
+                rs++;
+            }
+            //cout << "bool is: " << box.fullHit << endl;
+            return false;
+
+            break;
+        }
+        case 4: {
+            //cout << "its a p unit" << endl;
+            p_unit *cur_unit;
+            cur_unit = dynamic_cast<p_unit *> (units[unidex]);
+            int mid = cur_unit->getMemp();
+            int start = memp[mid].st;
+            int length = memp[mid].len;
+            //cout << "Step: 1: " << start << " " << length << endl;
+            char* pat = (char *) malloc(length * sizeof(char));
+            //cout << "Step: 1.5: " << seq << endl;
+            //cout << pat << endl;
+            //cout << start << endl;
+            //cout << length << endl;
+            subChars(seq, pat, start, length);
+            //cout << "Step: 2" << endl;
+            if (cur_unit->getRevc()) {
+                revChar(pat);
+            }
+            //cout << "Step: 3" << endl;
+
+            int counter = 0;
+            while (((seq[i+counter] == pat[counter]) || (seq[i+counter] == 'N')) && (counter < length)) {
+                counter++;
+                //cout << "Count: " << counter << endl;
+            }
+            //cout << "Step: 4: " << counter << endl;
+            bool box = false;
+            //cout << box.fullHit << endl;
+            if (counter >= length) {
+                //cout << "Rev: " << pat << endl;
+                r[unidex] = counter;
+                //cout << "Step: " << counter << " " << length << endl;
+                box = runUnit(unidex+1, i+length, seq, units, memp, r);
+
+            }
+            //cout << "Step: 5" << endl;
+            //cout << "bool is: " << box.fullHit << endl;
+            return box;
+            //cout << "Step: 6" << endl;
+            break;
+        }
     }
+    return false;
 }
+
+/*
+void test1(int *m[], int counter) {
+    cout << m[1][1] << endl;
+    m[1][1] += 1;
+    if (counter < 1) {
+        test1(m, counter+1);
+    }
+    cout << m[1][1] << endl;
+}
+void test2(int *m[], int len) {
+    m[2][len-1] = 25;
+    cout << m[2][len-1] << endl;
+}
+*/
+
 
 
 int main(int argc, char** argv) {
@@ -235,7 +481,7 @@ int main(int argc, char** argv) {
 		patFileName = argv[1];
 		genomFileName = argv[2];
 	} else {
-		cerr << "Usage: ./scan_for_matches file1 file2\n";
+		cerr << "Usage: ./scan_for_matches patternfile genomefil e\n";
 	}
 	ifstream patFile;
 	patFile.open(patFileName);
@@ -260,44 +506,77 @@ int main(int argc, char** argv) {
 	}
 	genomFile.close();
 	cout << pattern << endl;
-
-
     /*
     string s1 = "p1=4...8";
     string s2 = "~p1";
     string s3 = "245";
-    string s4 = "AAANNBNAA[2,1,0]"; */
-    string s5 = "ATTATACA[2,1,0]";
-    Pattern match(pattern);
-    /* match1 = parsePatString(s1);
-    match2 = parsePatString(s2);
-    match3 = parsePatString(s4);
-    cout << "Hejsa derrrrrr" << endl;
-    cout << match1.start << " : " << match1.finish << " Reverse Complement: " << match1.revers << endl;
-    cout << match2.start << " : " << match2.finish << " Reverse Complement: " << match2.revers << endl;
-    cout << match3.pattern << " - " << match3.mismatches << " " << match3.insertions << " " << match3.deletions << endl;
-
-	cout << match.getMismatch() << endl;
-	cout << (match.getPattern()).length() << " - " << match.getMismatch() << " " << match.getInsert() << " " << match.getDelet() << endl;
-
-    amb result = modLevenshtein(t1, t2);
-    cout << "Mis: " << result.mis << endl << "Ins: " << result.ins << endl << "Del: " << result.del << endl; */
-
-    Rule unit = parsePatString(s5);
-    Rule *p_unit = &unit;
-
-    cout << p_unit << endl;
-    cout << p_unit->getID() << endl;
+    string s4 = "AAANNBNAA[2,1,0]";
+    string s5 = "ATTATACA[2,1,0]";*/
 
     clock_t ct;
     ct = clock();
     cout << "Clock start: " << ct << endl;
 
+    max_units = 1;
+    int len_lines = 3;
+
+    /*
+    Rule *units[max_units];
+    units[0] = parsePatString("p1=4...7");
+    units[1] = parsePatString("3...8");
+    units[2] = parsePatString("~p1");*/
+
+    Rule *units1[max_units];
+    units1[0] = parsePatString("AATCAA[2,1,0]");
+
+    char* genlines[3];
+    genlines[0] = "TCCTGTCTCATTCTACTAATCAATTTAAAATTTTCATTCATTTGGTTATA";
+    genlines[1] = "TAGCTCAAATCTTAAGTACAGTTTTTAGTCAATTGACAGCCATATAATTC";
+    genlines[2] = "TTAGTTTTGTATACTGATATTCATTAGAAATTATAAACTTTAAAAAATAT";
+
+    int line_length;
+
+    /*
+    subChars(genlines[0], memp[1].s, 3, 6);
+    cout << memp[1].s << endl;
+    */
+
+
+    for (int line_i = 0; line_i < len_lines; line_i++) { // Loops through each sequence line
+        line_length = strlen(genlines[line_i]);
+        //cout << "line: " << line_i << ":";
+        for (int s_i = 0; s_i < line_length; s_i++) { // Traverses each character in the sequence
+            //cout << " " << s_i;
+            sav_pat memp[5];
+            int ren[max_units];
+
+            bool foundHit = runUnit(0, s_i, genlines[line_i], units1, memp, ren);
+
+            //cout << "Is there a hit: " << box.fullHit << endl;
+
+            if (foundHit) {
+                cout << "line: " << line_i << ": " << s_i << endl;
+                for (int j = 0; j < max_units; j++) {
+                    //cout << results[j] << " ";
+                    int r_len = s_i + results[j];
+                    while (s_i < r_len) {
+                        cout << (genlines[line_i])[s_i];
+                        s_i++;
+                    }
+                    cout << " ";
+                }
+                cout << endl;
+            }
+        }
+        //cout << endl;
+    }
+
+    /*
     string t = "ATCGCACBTTATACATTATTATACAT";
 
     for (int i = 1; i < genome.size(); i++) {
         runTextline(match, genome[i]); // runs each textline and searches for matches.
-    }
+    } */
 
     ct = clock() - ct;
     cout << "Clock end: " << ct << endl;

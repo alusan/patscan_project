@@ -60,6 +60,6 @@ void Pattern::getOverlap(int overlap[], int len) {
     }
 }
 
-std::string Pattern::getPattern() {
+char* Pattern::getPattern() {
     return pattern;
 }

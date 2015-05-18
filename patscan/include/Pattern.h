@@ -12,7 +12,7 @@ class Pattern : public Rule
         int getInsert();
         int getDelet();
         void getOverlap(int overlap[], int len);
-        std::string getPattern();
+        char* getPattern();
     protected:
         char* pattern = (char *) malloc(10 * sizeof(char));
         int mismatches;
