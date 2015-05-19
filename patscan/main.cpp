@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <sstream>
 #include "include/rule.h"
 #include "include/pattern.h"
 #include "include/pm_unit.h"
@@ -28,10 +29,11 @@ struct result_box {
 };
 
 
+//int m[10][50][20][50]; For DP programming
 int results[20];
 int max_units;
 
-void subChars(char* s, char* newString, int start, int length) {
+void subChars(string s, char* newString, int start, int length) {
     for (int i = 0; i < length; i++) {
         newString[i] = s[start];
         start++;
@@ -143,19 +145,40 @@ void revChar(char* str) { //modified reverse function from stackoverflow.
     }
 }
 
-int parseNum(int *index, string s) { // Updates index and returns string number
-    int formerIndex = *index;
-    int length = 0;
-    bool finished = true;
-    while(finished) {
-        if(isdigit(s[*index])) {
-            length++;
-            (*index)++;
-        } else {
-            finished = false;
+int getminimunLimit(Rule **units) {
+    int minimumLimit = -1;
+    int m[5];
+    for (int i = 0; i < max_units; i++) {
+        switch (units[i]->getID()) {
+            case 1: {
+                Pattern *cur_unit;
+                cur_unit = dynamic_cast<Pattern *> (units[i]);
+                char* pat = cur_unit->getPattern();
+                minimumLimit += strlen(pat);
+                break;
+            }
+            case 2: {
+                pm_unit *cur_unit;
+                cur_unit = dynamic_cast<pm_unit *> (units[i]);
+                m[cur_unit->getMemp()] = cur_unit->getStart();
+                minimumLimit += cur_unit->getStart();
+                break;
+            }
+            case 3: {
+                m_unit *cur_unit;
+                cur_unit = dynamic_cast<m_unit *> (units[i]);
+                minimumLimit += cur_unit->getStart();
+                break;
+            }
+            case 4: {
+                p_unit *cur_unit;
+                cur_unit = dynamic_cast<p_unit *> (units[i]);
+                minimumLimit += m[cur_unit->getMemp()];
+                break;
+            }
         }
     }
-    return stoi((s.substr(formerIndex, length)), nullptr, 10);
+    return minimumLimit;
 }
 
 bool patCheck(string s) {
@@ -216,7 +239,7 @@ Rule* parsePatString(string s) {
 finds the best levenshtein distance between min-max of 2nd string compared to the first.
 Has separate tracking of miamatches, insertions and deletions.
 */
-amb modLevenshtein(char* s1, char* s2, int i, int ins, int del, int mis, int *result_len) {
+amb modLevenshtein(char* s1, string s2, int i, int ins, int del, int mis, int *result_len) {
     amb final_result;
 
     unsigned int x, y, s1len, s2len;
@@ -251,7 +274,14 @@ amb modLevenshtein(char* s1, char* s2, int i, int ins, int del, int mis, int *re
         for (y = 1; y <= s1len; y++) {
             int a = getSum(matrix[x-1][y]) + 1;
             int b = getSum(matrix[x][y-1]) + 1;
-            int edit = (s1[y-1] == s2[x+i-1] ? 0 : 1);
+
+            int edit;
+            int s2i = x+i-1;
+            if ((toupper(s1[y-1]) == (s2[s2i])) || (toupper(s2[s2i]) == 'N')) {
+                edit = 0;
+            } else {
+                edit = 1;
+            }
             int c = getSum(matrix[x-1][y-1]) + edit;
             //cout << a << " ";
             //cout << b << " ";
@@ -291,7 +321,7 @@ amb modLevenshtein(char* s1, char* s2, int i, int ins, int del, int mis, int *re
     return final_result;
 }
 
-bool runUnit(int unidex, int i, char* seq, Rule **units, sav_pat *memp, int *r) {
+bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r) {
     if(unidex >= max_units) {
         //cout << "End: 1: " << unidex << endl;
         //cout << "End: 2" << endl;
@@ -315,7 +345,7 @@ bool runUnit(int unidex, int i, char* seq, Rule **units, sav_pat *memp, int *r) 
             if((mis+ins+del) == 0) {
                 int counter = 0;
                 int length = strlen(pat);
-                while (((seq[i+counter] == pat[counter]) || (seq[i+counter] == 'N'))
+                while (((toupper(seq[i+counter]) == toupper(pat[counter])) || (toupper(seq[i+counter]) == 'N'))
                        && (counter < length)) {
                 counter++;
                 }
@@ -428,7 +458,8 @@ bool runUnit(int unidex, int i, char* seq, Rule **units, sav_pat *memp, int *r) 
             //cout << "Step: 3" << endl;
 
             int counter = 0;
-            while (((seq[i+counter] == pat[counter]) || (seq[i+counter] == 'N')) && (counter < length)) {
+            while (((toupper(seq[i+counter]) == toupper(pat[counter])) ||
+                    (toupper(seq[i+counter]) == 'N')) && (counter < length)) {
                 counter++;
                 //cout << "Count: " << counter << endl;
             }
@@ -444,6 +475,7 @@ bool runUnit(int unidex, int i, char* seq, Rule **units, sav_pat *memp, int *r) 
             }
             //cout << "Step: 5" << endl;
             //cout << "bool is: " << box.fullHit << endl;
+            free(pat);
             return box;
             //cout << "Step: 6" << endl;
             break;
@@ -461,27 +493,28 @@ void test1(int *m[], int counter) {
     }
     cout << m[1][1] << endl;
 }
-void test2(int *m[], int len) {
-    m[2][len-1] = 25;
-    cout << m[2][len-1] << endl;
-}
-*/
-
+void test2(dp ***m[]) {
+    cout << m[2][2][2][2].check << " " << m[2][2][2][2].doneBefore << endl;
+}*/
 
 
 int main(int argc, char** argv) {
+    clock_t ct;
+    ct = clock();
+    cout << "Clock start: " << ct << endl;
 
 	string patFileName = "";
 	string genomFileName = "";
 	vector<string> genome;
-	string pattern;
+    string pattern;
 	string line;
 
 	if ( argc == 3 ){
 		patFileName = argv[1];
 		genomFileName = argv[2];
 	} else {
-		cerr << "Usage: ./scan_for_matches patternfile genomefil e\n";
+		cerr << "Usage: ./patscan patternfile genomefile\n";
+		return -1;
 	}
 	ifstream patFile;
 	patFile.open(patFileName);
@@ -491,13 +524,24 @@ int main(int argc, char** argv) {
 	}
 	else {
 		cerr << "Error; pattern file not open\n";
+		return -1;
 	}
+	int len_lines = 0;
 	patFile.close();
 	ifstream genomFile;
 	genomFile.open(genomFileName);
 	if (genomFile.is_open()){
+        getline(genomFile, line);
+        if ((line[0] == '>') && (line.size() > 1)) {
+            cout << "Running sequence file: " << line << endl;
+        } else {
+            cerr << "Error; genome file is not a compatible .fa format\n";
+            return -1;
+        }
+
         while (getline(genomFile, line)){
 			genome.push_back(line);
+			len_lines++;
 		}
 
 	}
@@ -505,53 +549,40 @@ int main(int argc, char** argv) {
         cerr << "Error; genome file not open\n";
 	}
 	genomFile.close();
-	cout << pattern << endl;
-    /*
-    string s1 = "p1=4...8";
-    string s2 = "~p1";
-    string s3 = "245";
-    string s4 = "AAANNBNAA[2,1,0]";
-    string s5 = "ATTATACA[2,1,0]";*/
 
-    clock_t ct;
-    ct = clock();
-    cout << "Clock start: " << ct << endl;
+    max_units = 0;
+    string buffer;
+    stringstream ss(pattern);
+    vector<string> pats; // Create vector to hold each pattern unit
 
-    max_units = 1;
-    int len_lines = 3;
+    while (ss >> buffer) {
+        pats.push_back(buffer);
+        max_units++;
+    }
 
-    /*
+    cout << "Running pattern: ";
     Rule *units[max_units];
-    units[0] = parsePatString("p1=4...7");
-    units[1] = parsePatString("3...8");
-    units[2] = parsePatString("~p1");*/
+    for (int i = 0; i < max_units; i++) {
+        cout << pats[i] << " ";
+        units[i] = parsePatString(pats[i]);
+    }
+    cout << endl;
+    //cout << "Max Units: " << max_units << endl;
+    //cout << "Lenght of Lines: " << len_lines << endl;
 
-    Rule *units1[max_units];
-    units1[0] = parsePatString("AATCAA[2,1,0]");
-
-    char* genlines[3];
-    genlines[0] = "TCCTGTCTCATTCTACTAATCAATTTAAAATTTTCATTCATTTGGTTATA";
-    genlines[1] = "TAGCTCAAATCTTAAGTACAGTTTTTAGTCAATTGACAGCCATATAATTC";
-    genlines[2] = "TTAGTTTTGTATACTGATATTCATTAGAAATTATAAACTTTAAAAAATAT";
+    int seq_limit = getminimunLimit(units);
 
     int line_length;
 
-    /*
-    subChars(genlines[0], memp[1].s, 3, 6);
-    cout << memp[1].s << endl;
-    */
-
-
     for (int line_i = 0; line_i < len_lines; line_i++) { // Loops through each sequence line
-        line_length = strlen(genlines[line_i]);
+        line_length = genome[line_i].size() - seq_limit;
         //cout << "line: " << line_i << ":";
         for (int s_i = 0; s_i < line_length; s_i++) { // Traverses each character in the sequence
+            //cout << "Checksum: " << (line_i * 100) + s_i << endl;
             //cout << " " << s_i;
             sav_pat memp[5];
             int ren[max_units];
-
-            bool foundHit = runUnit(0, s_i, genlines[line_i], units1, memp, ren);
-
+            bool foundHit = runUnit(0, s_i, genome[line_i], units, memp, ren);
             //cout << "Is there a hit: " << box.fullHit << endl;
 
             if (foundHit) {
@@ -560,7 +591,7 @@ int main(int argc, char** argv) {
                     //cout << results[j] << " ";
                     int r_len = s_i + results[j];
                     while (s_i < r_len) {
-                        cout << (genlines[line_i])[s_i];
+                        cout << (genome[line_i])[s_i];
                         s_i++;
                     }
                     cout << " ";

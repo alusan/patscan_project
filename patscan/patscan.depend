@@ -163,10 +163,11 @@
 	<vector>
 	<time.h>
 
-1431960352 source:c:\users\mort\patscan_project\patscan\main.cpp
+1432046865 source:c:\users\mort\patscan_project\patscan\main.cpp
 	<iostream>
 	<cstring>
 	<fstream>
+	<sstream>
 	"include/rule.h"
 	"include/pattern.h"
 	"include/pm_unit.h"
