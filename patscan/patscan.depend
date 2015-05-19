@@ -163,7 +163,7 @@
 	<vector>
 	<time.h>
 
-1432046865 source:c:\users\mort\patscan_project\patscan\main.cpp
+1432047016 source:c:\users\mort\patscan_project\patscan\main.cpp
 	<iostream>
 	<cstring>
 	<fstream>
@@ -179,7 +179,7 @@
 1431708349 c:\users\mort\patscan_project\patscan\include\rule.h
 	<string>
 
-1431953462 c:\users\mort\patscan_project\patscan\include\pattern.h
+1432052148 c:\users\mort\patscan_project\patscan\include\pattern.h
 	<iostream>
 	"rule.h"
 	<string>

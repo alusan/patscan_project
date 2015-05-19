@@ -18,6 +18,11 @@ struct amb {
     int del;
 };
 
+struct dp {
+    int sqline;
+    int sp;
+};
+
 struct sav_pat {
     int st;
     int len;
@@ -30,6 +35,7 @@ struct result_box {
 
 
 //int m[10][50][20][50]; For DP programming
+int currentLine; // For DP programming
 int results[20];
 int max_units;
 
@@ -321,7 +327,7 @@ amb modLevenshtein(char* s1, string s2, int i, int ins, int del, int mis, int *r
     return final_result;
 }
 
-bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r) {
+bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r, dp *m[]) {
     if(unidex >= max_units) {
         //cout << "End: 1: " << unidex << endl;
         //cout << "End: 2" << endl;
@@ -333,6 +339,9 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
 
     switch (units[unidex]->getID()) {
         case 1: {
+            if (m[unidex][i].sqline == currentLine) {
+                return false;
+            }
             //cout << i << endl;
             Pattern *cur_unit;
             cur_unit = dynamic_cast<Pattern *> (units[unidex]);
@@ -351,7 +360,7 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
                 }
                 if (counter >= length) {
                     r[unidex] = counter;
-                    box = runUnit(unidex+1, i+length, seq, units, memp, r);
+                    box = runUnit(unidex+1, i+length, seq, units, memp, r, m);
                 }
             } else {
                 int result_len = strlen(pat) + ins;
@@ -359,8 +368,12 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
                 if ((amb_results.del <= del) && (amb_results.ins <= ins) && (amb_results.mis <= mis)) {
                     cout << "Amb: " << amb_results.mis << " " << amb_results.ins << " " << amb_results.del << " - ";
                     r[unidex] = result_len;
-                    box = runUnit(unidex+1, i+result_len, seq, units, memp, r);
+                    box = runUnit(unidex+1, i+result_len, seq, units, memp, r, m);
                 }
+            }
+
+            if (box == false) {
+                m[unidex][i].sqline = currentLine;
             }
 
             return box;
@@ -396,7 +409,7 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
                 //cout << "id: " << mid << " length: " << newp[mid].len << endl;
                 //cout << "Step: 6" << endl;
                 //cout << unidex+1 << " " << i+rs  << " " <<  seq  << endl << newp[mid].st << " " << newp[mid].len << " " <<  re[unidex] << endl;
-                box = runUnit(unidex+1, i+rs, seq, units, newp, ren);
+                box = runUnit(unidex+1, i+rs, seq, units, newp, ren, m);
                 //cout << "bool is: " << box.fullHit << endl;
                 //cout << "PM: 1" << endl;
                 //cout << "Step: 7" << endl;
@@ -424,7 +437,7 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
 
                 re[unidex] = rs;
                 //cout << unidex+1 << " " << i+rs  << " " <<  seq  << endl << re[unidex] << endl;
-                box = runUnit(unidex+1, i+rs, seq, units, memp, re);
+                box = runUnit(unidex+1, i+rs, seq, units, memp, re, m);
                 //cout << "M: 1" << endl;
                 if (box == true) {
                     //cout << "M: Success" << endl;
@@ -432,6 +445,7 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
                 }
                 rs++;
             }
+
             //cout << "bool is: " << box.fullHit << endl;
             return false;
 
@@ -443,7 +457,12 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
             cur_unit = dynamic_cast<p_unit *> (units[unidex]);
             int mid = cur_unit->getMemp();
             int start = memp[mid].st;
+
+            if ((m[unidex][i].sqline == currentLine) && (m[unidex][i].sp == start)) {
+                return false;
+            }
             int length = memp[mid].len;
+
             //cout << "Step: 1: " << start << " " << length << endl;
             char* pat = (char *) malloc(length * sizeof(char));
             //cout << "Step: 1.5: " << seq << endl;
@@ -463,6 +482,7 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
                 counter++;
                 //cout << "Count: " << counter << endl;
             }
+            free(pat);
             //cout << "Step: 4: " << counter << endl;
             bool box = false;
             //cout << box.fullHit << endl;
@@ -470,12 +490,14 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r)
                 //cout << "Rev: " << pat << endl;
                 r[unidex] = counter;
                 //cout << "Step: " << counter << " " << length << endl;
-                box = runUnit(unidex+1, i+length, seq, units, memp, r);
-
+                box = runUnit(unidex+1, i+length, seq, units, memp, r, m);
+            } else {
+                m[unidex][i].sqline = currentLine;
+                m[unidex][i].sp = start;
             }
             //cout << "Step: 5" << endl;
             //cout << "bool is: " << box.fullHit << endl;
-            free(pat);
+
             return box;
             //cout << "Step: 6" << endl;
             break;
@@ -493,8 +515,8 @@ void test1(int *m[], int counter) {
     }
     cout << m[1][1] << endl;
 }
-void test2(dp ***m[]) {
-    cout << m[2][2][2][2].check << " " << m[2][2][2][2].doneBefore << endl;
+void test2(dp *m[]) {
+    m[2][1].sp = 252525;
 }*/
 
 
@@ -571,18 +593,30 @@ int main(int argc, char** argv) {
     //cout << "Lenght of Lines: " << len_lines << endl;
 
     int seq_limit = getminimunLimit(units);
-
     int line_length;
+
+    dp **m = new dp *[3];
+    for(int i = 0; i < 3; i++)
+        m[i] = new dp[51];
+
+    for(int i = 0; i < 3; i++) {
+        for(int j = 0; j < 51; j++) {
+            m[i][j].sqline = -1;
+            m[i][j].sp = -1;
+        }
+    }
+
 
     for (int line_i = 0; line_i < len_lines; line_i++) { // Loops through each sequence line
         line_length = genome[line_i].size() - seq_limit;
+        currentLine = line_i;
         //cout << "line: " << line_i << ":";
         for (int s_i = 0; s_i < line_length; s_i++) { // Traverses each character in the sequence
             //cout << "Checksum: " << (line_i * 100) + s_i << endl;
             //cout << " " << s_i;
             sav_pat memp[5];
             int ren[max_units];
-            bool foundHit = runUnit(0, s_i, genome[line_i], units, memp, ren);
+            bool foundHit = runUnit(0, s_i, genome[line_i], units, memp, ren, m);
             //cout << "Is there a hit: " << box.fullHit << endl;
 
             if (foundHit) {

@@ -14,7 +14,7 @@ class Pattern : public Rule
         void getOverlap(int overlap[], int len);
         char* getPattern();
     protected:
-        char* pattern = (char *) malloc(10 * sizeof(char));
+        char* pattern = (char *) malloc(50 * sizeof(char));
         int mismatches;
         int insertions;
         int deletions;
