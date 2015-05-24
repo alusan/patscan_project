@@ -45,28 +45,33 @@
 	<rule.h>
 	<pattern.h>
 
-1426814460 source:c:\users\mort\desktop\patscan\src\pattern.cpp
+1431953554 source:c:\users\mort\desktop\patscan\src\pattern.cpp
 	"Pattern.h"
 	"Rule.h"
 
-1426814463 c:\users\mort\desktop\patscan\include\pattern.h
+1432052148 c:\users\mort\desktop\patscan\include\pattern.h
 	<iostream>
-	<Rule.h>
+	"rule.h"
 	<string>
 
-1426686940 c:\users\mort\desktop\patscan\include\rule.h
+1431708349 c:\users\mort\desktop\patscan\include\rule.h
 	<string>
 
-1426686914 source:c:\users\mort\desktop\patscan\src\rule.cpp
+1431708368 source:c:\users\mort\desktop\patscan\src\rule.cpp
 	"Rule.h"
 
-1428676193 source:c:\users\mort\desktop\patscan\main.cpp
+1432074954 source:c:\users\mort\desktop\patscan\main.cpp
 	<iostream>
-	<string>
-	<ctype.h>
+	<cstring>
 	<fstream>
-	<rule.h>
-	<pattern.h>
+	<sstream>
+	"include/rule.h"
+	"include/pattern.h"
+	"include/pm_unit.h"
+	"include/p_unit.h"
+	"include/m_unit.h"
+	<vector>
+	<time.h>
 
 1426814460 source:c:\users\morti\desktop\patscan\src\pattern.cpp
 	"Pattern.h"
@@ -233,4 +238,160 @@
 
 1431608656 c:\users\mort\patscan_project\patscan\include\m_unit.h
 	<Rule.h>
+
+1431608659 source:c:\users\mort\desktop\patscan\src\m_unit.cpp
+	"m_unit.h"
+
+1431608656 c:\users\mort\desktop\patscan\include\m_unit.h
+	<Rule.h>
+
+1431608639 source:c:\users\mort\desktop\patscan\src\p_unit.cpp
+	"p_unit.h"
+
+1431608628 c:\users\mort\desktop\patscan\include\p_unit.h
+	<Rule.h>
+
+1431712695 source:c:\users\mort\desktop\patscan\src\pm_unit.cpp
+	"pm_unit.h"
+
+1431712699 c:\users\mort\desktop\patscan\include\pm_unit.h
+	<Rule.h>
+
+1431608659 source:c:\users\mort\dropbox\patscan - version 4\src\m_unit.cpp
+	"m_unit.h"
+
+1431608656 c:\users\mort\dropbox\patscan - version 4\include\m_unit.h
+	<Rule.h>
+
+1431708349 c:\users\mort\dropbox\patscan - version 4\include\rule.h
+	<string>
+
+1431608639 source:c:\users\mort\dropbox\patscan - version 4\src\p_unit.cpp
+	"p_unit.h"
+
+1431608628 c:\users\mort\dropbox\patscan - version 4\include\p_unit.h
+	<Rule.h>
+
+1431953554 source:c:\users\mort\dropbox\patscan - version 4\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1432052148 c:\users\mort\dropbox\patscan - version 4\include\pattern.h
+	<iostream>
+	"rule.h"
+	<string>
+
+1431712695 source:c:\users\mort\dropbox\patscan - version 4\src\pm_unit.cpp
+	"pm_unit.h"
+
+1431712699 c:\users\mort\dropbox\patscan - version 4\include\pm_unit.h
+	<Rule.h>
+
+1431708368 source:c:\users\mort\dropbox\patscan - version 4\src\rule.cpp
+	"Rule.h"
+
+1432089948 source:c:\users\mort\dropbox\patscan - version 4\main.cpp
+	<iostream>
+	<cstring>
+	<fstream>
+	<sstream>
+	"include/rule.h"
+	"include/pattern.h"
+	"include/pm_unit.h"
+	"include/p_unit.h"
+	"include/m_unit.h"
+	<vector>
+	<time.h>
+
+1431608659 source:c:\users\mort\desktop\patscan - version 4\src\m_unit.cpp
+	"m_unit.h"
+
+1431608656 c:\users\mort\desktop\patscan - version 4\include\m_unit.h
+	<Rule.h>
+
+1431708349 c:\users\mort\desktop\patscan - version 4\include\rule.h
+	<string>
+
+1431608639 source:c:\users\mort\desktop\patscan - version 4\src\p_unit.cpp
+	"p_unit.h"
+
+1431608628 c:\users\mort\desktop\patscan - version 4\include\p_unit.h
+	<Rule.h>
+
+1431953554 source:c:\users\mort\desktop\patscan - version 4\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1432052148 c:\users\mort\desktop\patscan - version 4\include\pattern.h
+	<iostream>
+	"rule.h"
+	<string>
+
+1431712695 source:c:\users\mort\desktop\patscan - version 4\src\pm_unit.cpp
+	"pm_unit.h"
+
+1431712699 c:\users\mort\desktop\patscan - version 4\include\pm_unit.h
+	<Rule.h>
+
+1431708368 source:c:\users\mort\desktop\patscan - version 4\src\rule.cpp
+	"Rule.h"
+
+1432422345 source:c:\users\mort\desktop\patscan - version 4\main.cpp
+	<iostream>
+	<cstring>
+	<fstream>
+	<sstream>
+	"include/rule.h"
+	"include/pattern.h"
+	"include/pm_unit.h"
+	"include/p_unit.h"
+	"include/m_unit.h"
+	<vector>
+	<time.h>
+
+1432423012 source:c:\users\mort\desktop\patscan - version 5\main.cpp
+	<iostream>
+	<cstring>
+	<fstream>
+	<sstream>
+	"include/rule.h"
+	"include/pattern.h"
+	"include/pm_unit.h"
+	"include/p_unit.h"
+	"include/m_unit.h"
+	<vector>
+	<time.h>
+
+1431708349 c:\users\mort\desktop\patscan - version 5\include\rule.h
+	<string>
+
+1432052148 c:\users\mort\desktop\patscan - version 5\include\pattern.h
+	<iostream>
+	"rule.h"
+	<string>
+
+1431712699 c:\users\mort\desktop\patscan - version 5\include\pm_unit.h
+	<Rule.h>
+
+1431608628 c:\users\mort\desktop\patscan - version 5\include\p_unit.h
+	<Rule.h>
+
+1431608656 c:\users\mort\desktop\patscan - version 5\include\m_unit.h
+	<Rule.h>
+
+1431608659 source:c:\users\mort\desktop\patscan - version 5\src\m_unit.cpp
+	"m_unit.h"
+
+1431608639 source:c:\users\mort\desktop\patscan - version 5\src\p_unit.cpp
+	"p_unit.h"
+
+1431953554 source:c:\users\mort\desktop\patscan - version 5\src\pattern.cpp
+	"Pattern.h"
+	"Rule.h"
+
+1431712695 source:c:\users\mort\desktop\patscan - version 5\src\pm_unit.cpp
+	"pm_unit.h"
+
+1431708368 source:c:\users\mort\desktop\patscan - version 5\src\rule.cpp
+	"Rule.h"
 
