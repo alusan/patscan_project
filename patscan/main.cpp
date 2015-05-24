@@ -697,6 +697,7 @@ int main(int argc, char** argv) {
         }
 
     } else {
+        // set up as function for multithreading when implemented by dividing the sequences to work on
         rundpProcess(0, len_lines, genome, seq_limit, units);
     } // end of ELSE
     ct = clock() - ct;
