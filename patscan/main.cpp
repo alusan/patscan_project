@@ -144,6 +144,88 @@ char comp(char c) { //complement function from scan_for_matches
     }
 }
 
+int basetoindex(char input){
+    switch (input)
+    {
+      case 'a':
+	return 1;
+      case 'A':
+	return 1;
+
+      case 'c':
+	return 2;
+      case 'C':
+	return 2;
+
+      case 'g':
+	return 3;
+      case 'G':
+	return 3;
+
+      case 't':
+	return 4;
+      case 'T':
+	return 4;
+
+      case 'm':
+	return 5;
+      case 'M':
+	return 5;
+
+      case 'r':
+	return 6;
+      case 'R':
+	return 6;
+
+      case 'w':
+	return 7;
+      case 'W':
+	return 7;
+
+      case 's':
+	return 8;
+      case 'S':
+	return 8;
+
+      case 'y':
+	return 9;
+      case 'Y':
+	return 9;
+
+      case 'k':
+	return 10;
+      case 'K':
+	return 10;
+
+      case 'b':
+	return 11;
+      case 'B':
+	return 11;
+
+      case 'd':
+	return 12;
+      case 'D':
+	return 12;
+
+      case 'h':
+	return 13;
+      case 'H':
+	return 13;
+
+      case 'v':
+	return 14;
+      case 'V':
+	return 14;
+
+      case 'n':
+	return 15;
+      case 'N':
+	return 15;
+
+
+}
+    return 0;
+}
 void revChar(char* str) { //modified reverse function from stackoverflow.
     const size_t len = strlen(str);
     const size_t half = len / 2;
