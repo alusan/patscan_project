@@ -18,9 +18,9 @@ Pattern::Pattern(std::string s) {
         i++;
         mismatches = parseNum(&i, s);
         i++;
-        insertions = parseNum(&i, s);
-        i++;
         deletions = parseNum(&i, s);
+        i++;
+        insertions = parseNum(&i, s);
     } else {
         mismatches = 0;
         insertions = 0;

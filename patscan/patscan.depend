@@ -349,7 +349,7 @@
 	<vector>
 	<time.h>
 
-1432423012 source:c:\users\mort\desktop\patscan - version 5\main.cpp
+1432546649 source:c:\users\mort\desktop\patscan - version 5\main.cpp
 	<iostream>
 	<cstring>
 	<fstream>
@@ -385,7 +385,7 @@
 1431608639 source:c:\users\mort\desktop\patscan - version 5\src\p_unit.cpp
 	"p_unit.h"
 
-1431953554 source:c:\users\mort\desktop\patscan - version 5\src\pattern.cpp
+1432545720 source:c:\users\mort\desktop\patscan - version 5\src\pattern.cpp
 	"Pattern.h"
 	"Rule.h"
 

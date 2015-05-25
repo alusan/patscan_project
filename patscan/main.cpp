@@ -36,7 +36,7 @@ struct result_box {
 
 //int m[10][50][20][50]; For DP programming
 int currentLine; // For DP programming
-int *results;
+int results[20];
 int max_units;
 int current_line_length;
 char lineComp[51];
@@ -162,7 +162,7 @@ int getminimunLimit(Rule **units) {
                 Pattern *cur_unit;
                 cur_unit = dynamic_cast<Pattern *> (units[i]);
                 char* pat = cur_unit->getPattern();
-                minimumLimit += strlen(pat);
+                minimumLimit += strlen(pat)-cur_unit->getDelet();
                 break;
             }
             case 2: {
@@ -318,7 +318,8 @@ amb modLevenshtein(char* s1, string s2, int i, int ins, int del, int mis, int *r
             }
         }
         // check matches between (len - del) and (ins + len). Return correct one
-        if ((x >= rangeS) && ((matrix[x][s1len].mis < mis) && (matrix[x][s1len].del < del) && (matrix[x][s1len].ins < ins))) {
+        if ((x >= rangeS) && ((matrix[x][s1len].mis <= mis) && (matrix[x][s1len].del <= del) && (matrix[x][s1len].ins <= ins))) {
+
             *result_len = x;
             return matrix[x][s1len];
         }
@@ -328,8 +329,6 @@ amb modLevenshtein(char* s1, string s2, int i, int ins, int del, int mis, int *r
 
 bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r, dp *m[]) {
     if(unidex >= max_units) {
-        //cout << "End: 1: " << unidex << endl;
-        results = r;
         return true;
     }
 
@@ -363,7 +362,7 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r,
                     }
                 }
                 if (counter >= length) {
-                    r[unidex] = counter;
+                    results[unidex] = counter;
                     box = runUnit(unidex+1, i+length, seq, units, memp, r, m);
                 }
             } else {
@@ -377,7 +376,7 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r,
                 amb amb_results = modLevenshtein(pat, seq, i, ins, del, mis, &result_len);
                 if ((amb_results.del <= del) && (amb_results.ins <= ins) && (amb_results.mis <= mis)) {
                     cout << "Amb: " << amb_results.mis << " " << amb_results.ins << " " << amb_results.del << " - ";
-                    r[unidex] = result_len;
+                    results[unidex] = result_len;
                     box = runUnit(unidex+1, i+result_len, seq, units, memp, r, m);
                 }
             }
@@ -405,7 +404,7 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r,
                 //cout << "Step: 4" << endl;
 
                 //cout << "Step: 5" << endl;
-                r[unidex] = rs;
+                results[unidex] = rs;
                 memp[mid].len = rs;
                 //cout << "id: " << mid << " length: " << newp[mid].len << endl;
                 //cout << "Step: 6" << endl;
@@ -432,13 +431,9 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r,
             bool box = false;
 
             while (rs <= re) {
-                int re[max_units];
-                for(int i = 0; i < max_units; i++)
-                    re[i] = r[i];
-
-                re[unidex] = rs;
+                results[unidex] = rs;
                 //cout << unidex+1 << " " << i+rs  << " " <<  seq  << endl << re[unidex] << endl;
-                box = runUnit(unidex+1, i+rs, seq, units, memp, re, m);
+                box = runUnit(unidex+1, i+rs, seq, units, memp, r, m);
                 //cout << "M: 1" << endl;
                 if (box == true) {
                     //cout << "M: Success" << endl;
@@ -458,27 +453,32 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r,
             cur_unit = dynamic_cast<p_unit *> (units[unidex]);
             int mid = cur_unit->getMemp();
             int start = memp[mid].st;
+            //cout << "Step: 1" << endl;
 
             if ((m[unidex][i].sqline == currentLine) && (m[unidex][i].sp == start)) {
                 return false;
             }
+            //cout << "Step: 1.5" << endl;
             int length = memp[mid].len;
 
-            //cout << "Step: 1: " << start << " " << length << endl;
+            //cout << "Step: 2" << endl;
             //cout << "Step: 1.5: " << seq << endl;
             //cout << pat << endl;
             //cout << start << endl;
             //cout << length << endl;
             //cout << "Step: 2" << endl;
             //cout << "Step: 3" << endl;
+
             int counter = 0;
             if (cur_unit->getRevc()) {
+                //cout << "Step: 3" << endl;
                 int offset = current_line_length - length - start;
                 while (((toupper(seq[i+counter]) == toupper(lineComp[counter+offset])) ||
                         (toupper(seq[i+counter]) == 'N')) && (counter < length)) {
                     counter++;
                 }
             } else {
+                //cout << "Step: 4" << endl;
                 while (((toupper(seq[i+counter]) == toupper(seq[counter+start])) ||
                         (toupper(seq[i+counter]) == 'N')) && (counter < length)) {
                     counter++;
@@ -490,9 +490,10 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r,
             //cout << box.fullHit << endl;
             if (counter >= length) {
                 //cout << "Rev: " << pat << endl;
-                r[unidex] = counter;
+                results[unidex] = counter;
                 //cout << "Step: " << counter << " " << length << endl;
                 box = runUnit(unidex+1, i+length, seq, units, memp, r, m);
+                //cout << "Full Hit" << endl;
             } else {
                 m[unidex][i].sqline = currentLine;
                 m[unidex][i].sp = start;
@@ -511,11 +512,11 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r,
 void rundpProcess(int start, int len_lines, vector<string> &genome, int seq_limit, Rule **units) {
     int line_length;
     sav_pat memp[5];
-    dp **m = new dp *[3];
-    for(int i = 0; i < 3; i++)
+    dp **m = new dp *[max_units];
+    for(int i = 0; i < max_units; i++)
         m[i] = new dp[60];
 
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < max_units; i++) {
         for(int j = 0; j < 60; j++) {
             m[i][j].sqline = -1;
             m[i][j].sp = -1;
@@ -697,7 +698,7 @@ int main(int argc, char** argv) {
         }
 
     } else {
-        // set up as function for multithreading when implemented by dividing the sequences to work on
+        cout << "Running process" << endl;
         rundpProcess(0, len_lines, genome, seq_limit, units);
     } // end of ELSE
     ct = clock() - ct;
