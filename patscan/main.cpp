@@ -34,12 +34,12 @@ struct result_box {
 };
 
 
-//int m[10][50][20][50]; For DP programming
 int currentLine; // For DP programming
 int results[20];
 int max_units;
 int current_line_length;
 char lineComp[51];
+int ambresult;
 
 void subChars(string s, char* newString, int start, int length) {
     for (int i = 0; i < length; i++) {
@@ -243,6 +243,16 @@ Rule* parsePatString(string s) {
     }
 }
 
+
+// Basic bruteforce backtracking algorithm for mis, ins and del
+void brutetracking(int index, string s, char* t, int mm, int ins, int del) {
+    while (s[index] && s[index] == *t) ++index, ++t;
+    if (!*t) ambresult = index;
+    if (mm && s[index] && *t) brutetracking(index+1, s, t + 1, mm - 1, ins, del);
+    if (ins && s[index]) brutetracking(index+1, s, t, mm, ins - 1, del);
+    if (del && *t) brutetracking(index, s, t + 1, mm, ins, del - 1);
+}
+
 /*
 finds the best levenshtein distance between min-max of 2nd string compared to the first.
 Has separate tracking of miamatches, insertions and deletions.
@@ -371,11 +381,10 @@ bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r,
 
                 }*/
 
-
-                int result_len = strlen(pat) + ins;
-                amb amb_results = modLevenshtein(pat, seq, i, ins, del, mis, &result_len);
-                if ((amb_results.del <= del) && (amb_results.ins <= ins) && (amb_results.mis <= mis)) {
-                    cout << "Amb: " << amb_results.mis << " " << amb_results.ins << " " << amb_results.del << " - ";
+                ambresult = 0;
+                brutetracking(i, seq, pat, mis, ins, del);
+                if (ambresult) {
+                    int result_len = ambresult - i;
                     results[unidex] = result_len;
                     box = runUnit(unidex+1, i+result_len, seq, units, memp, r, m);
                 }
