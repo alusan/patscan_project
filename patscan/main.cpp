@@ -33,6 +33,11 @@ struct result_box {
     int* r;
 };
 
+struct bitap_box {
+    bool found_match = false;
+    int min_errors;
+};
+
 
 int currentLine; // For DP programming
 int results[20];
@@ -336,6 +341,92 @@ amb modLevenshtein(char* s1, string s2, int i, int ins, int del, int mis, int *r
     }
     return matrix[s2len][s1len];
 }
+
+bitap_box modBitap(char* pattern, string text, int i, unsigned int errors, int *result_len){
+    bitap_box output;
+    output.min_errors = -1;
+
+    unsigned int patlen, textlen;
+    patlen = strlen(pattern);
+    textlen = *result_len;
+    unsigned long *R;
+    unsigned long pattern_mask[32];
+    unsigned long old_Rd1, tmp, checkval;
+    unsigned int j, k;
+
+    if (pattern[0] == '\0') return output;
+    if (patlen > 31) return output;
+
+    /* Initialize bit array R*/
+    R = (unsigned long*)(malloc((errors+1) * sizeof *R));
+    for (j=0; j <= errors; j++){
+        R[j] = 1;
+    }
+
+    /* Initialize Pattern Bitmasks */
+    for (j=0; j < patlen; j++){
+        pattern_mask[basetoindex(pattern[j])] |= (1UL << j);
+    }
+    // Special case for 'N'
+    pattern_mask[15] = ~0;
+
+    /* Do the work */
+    for (j=0; j < patlen; j++){
+        old_Rd1 = R[0];
+        R[0] <<= 1;
+        R[0] |= 1UL;
+        R[0] &= pattern_mask[basetoindex(text[i+j])];
+
+        for(k = 1; k <= errors; k++){
+            // Check up to number of errors
+            tmp = R[k];
+            R[k] = (((R[k] << 1) | 1UL) & pattern_mask[basetoindex(text[i+j])])
+                   | (((old_Rd1 | R[k-1]) << 1) | 1UL)
+                   | old_Rd1;
+            old_Rd1 = tmp;
+        }
+    }
+    checkval = R[0] >> (patlen - 1);
+    checkval &= 1UL;
+    if(checkval > 0){
+        output.found_match = true;
+        output.min_errors = 0;
+        free(R);
+        return output;
+    }
+
+    while(j < textlen){
+        old_Rd1 = R[0];
+        R[0] <<= 1;
+        R[0] |= 1UL;
+        R[0] &= pattern_mask[basetoindex(text[i+j])];
+
+        for(k = 1; k <= errors; k++){
+            // Check up to number of errors
+            tmp = R[k];
+            R[k] = (((R[k] << 1) | 1UL) & pattern_mask[basetoindex(text[i+j])])
+                   | (((old_Rd1 | R[k-1]) << 1) | 1UL)
+                   | old_Rd1;
+            old_Rd1 = tmp;
+        }
+        j++;
+    }
+
+    for (k = 1; k <= errors; k++){
+        R[k] >>= patlen - 1;
+        R[k] &= 1UL;
+        if (R[k] == 1){
+            cout << k << endl;
+            output.min_errors = k;
+            output.found_match = true;
+            free(R);
+            return output;
+        }
+    }
+    free(R);
+    return output;
+}
+
 
 bool runUnit(int unidex, int i, string seq, Rule **units, sav_pat *memp, int *r, dp *m[]) {
     if(unidex >= max_units) {
